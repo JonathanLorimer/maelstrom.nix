@@ -1,5 +1,5 @@
 {
-  description = "A clj-nix flake";
+  description = "Maelstrom binary provided via nix";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
