@@ -48,13 +48,11 @@
         });
     in
       {
-        packages = forAllSystems ({cljpkgs, pkgs, maelstrom-lock, ...}: {
-          maelstrom-lock = maelstrom-lock;
+        packages = forAllSystems ({system, cljpkgs, pkgs, maelstrom-lock, ...}: {
           maelstrom = cljpkgs.mkCljBin {
             projectSrc = maelstrom-src;
             name = "maelstrom";
             main-ns = "maelstrom.core";
-            # jdkRunner = pkgs.jdk; # This is the default
             lockfile = "${maelstrom-lock}/deps-lock.json";
             buildCommand = ''
               BUILD_DIR="maelstrom"
@@ -65,6 +63,15 @@
             '';
             java-opts = [ "-Djava.awt.headless=true" ];
           };
+          default = self.packages.${system}.maelstrom;
+        });
+
+        apps = forAllSystems ({system, ...}: {
+          maelstrom = { 
+            type = "app"; 
+            program = "${self.packages.${system}.maelstrom}/bin/maelstrom"; 
+          };
+          default = self.apps.${system}.maelstrom;
         });
       };
 
