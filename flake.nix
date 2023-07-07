@@ -54,8 +54,16 @@
             projectSrc = maelstrom-src;
             name = "maelstrom";
             main-ns = "maelstrom.core";
-            jdkRunner = pkgs.jdk;
+            # jdkRunner = pkgs.jdk; # This is the default
             lockfile = "${maelstrom-lock}/deps-lock.json";
+            buildCommand = ''
+              BUILD_DIR="maelstrom"
+              export jarPath="$BUILD_DIR/maelstrom.jar"
+              mkdir -p $BUILD_DIR
+              lein do clean, run doc, uberjar
+              cp target/maelstrom-*-standalone.jar "$jarPath"
+            '';
+            java-opts = [ "-Djava.awt.headless=true" ];
           };
         });
       };
